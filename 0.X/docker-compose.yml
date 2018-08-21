@@ -5,4 +5,4 @@ services:
     ports: 
       - 8500:8500
     volumes: 
-      - ~/projects/docker-consul/consul/:/tmp/consul/
+      - ../consul/:/tmp/consul/
