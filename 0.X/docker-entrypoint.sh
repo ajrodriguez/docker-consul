@@ -93,6 +93,7 @@ if [ "$1" = 'consul' ]; then
     fi
 
     set -- su-exec consul:consul "$@"
+
 fi
 
 exec "$@"

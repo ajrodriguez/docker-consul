@@ -2,7 +2,7 @@ FROM alpine:3.7
 MAINTAINER Preetha Appan <preetha@hashicorp.com> (@preetapan)
 
 # This is the release of Consul to pull in.
-ENV CONSUL_VERSION=1.2.2
+ENV CONSUL_VERSION=1.1.1
 
 # This is the location of the releases.
 ENV HASHICORP_RELEASES=https://releases.hashicorp.com
@@ -66,13 +66,21 @@ EXPOSE 8301 8301/udp 8302 8302/udp
 # use to interact with Consul.
 EXPOSE 8500 8600 8600/udp
 
+# Init data
+COPY init.json /tmp/init.json
+
 # Consul doesn't need root privileges so we run it as the consul user from the
 # entry point script. The entry point script also uses dumb-init as the top-level
 # process to reap any zombie processes created by Consul sub-processes.
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT ["docker-entrypoint.sh"]
 
+COPY init-load.sh /root/init-load.sh
+
 # By default you'll get an insecure single-node development server that stores
 # everything in RAM, exposes a web UI and HTTP endpoints, and bootstraps itself.
 # Don't use this configuration for production.
-CMD ["agent", "-dev", "-client", "0.0.0.0"]
+# CMD ["agent", "-dev", "-client", "0.0.0.0"]
+
+WORKDIR /root
+CMD sh ./init-load.sh && tail -F /tmp/consul/consul-agent.log
